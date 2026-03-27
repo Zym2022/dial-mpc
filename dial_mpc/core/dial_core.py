@@ -42,6 +42,15 @@ def rollout_us(step_env, state, us):
     return rews, pipline_states
 
 
+def rollout_rews(step_env, state, us):
+    def step(state, u):
+        state = step_env(state, u)
+        return state, state.reward
+
+    _, rews = jax.lax.scan(step, state, us)
+    return rews
+
+
 @jax.jit
 def softmax_update(weights, Y0s, sigma, mu_0t):
     mu_0tm1 = jnp.einsum("n,nij->ij", weights, Y0s)
@@ -79,6 +88,10 @@ class MBDPI:
         # setup function
         self.rollout_us = jax.jit(functools.partial(rollout_us, self.env.step))
         self.rollout_us_vmap = jax.jit(jax.vmap(self.rollout_us, in_axes=(None, 0)))
+        self.rollout_rews = jax.jit(functools.partial(rollout_rews, self.env.step))
+        self.rollout_rews_vmap = jax.jit(
+            jax.vmap(self.rollout_rews, in_axes=(None, 0))
+        )
         self.node2u_vmap = jax.jit(
             jax.vmap(self.node2u, in_axes=(1), out_axes=(1))
         )  # process (horizon, node)
@@ -117,11 +130,19 @@ class MBDPI:
         us = self.node2u_vvmap(Y0s)
 
         # esitimate mu_0tm1
-        rewss, pipeline_statess = self.rollout_us_vmap(state, us)
-        rew_Ybar_i = rewss[-1].mean()
-        qss = pipeline_statess.q
-        qdss = pipeline_statess.qd
-        xss = pipeline_statess.x.pos
+        if self.args.memory_efficient_rollout:
+            rewss = self.rollout_rews_vmap(state, us)
+            rew_Ybar_i = rewss[-1].mean()
+            horizon = rewss.shape[1]
+            qbar = jnp.tile(state.pipeline_state.q[None, :], (horizon, 1))
+            qdbar = jnp.tile(state.pipeline_state.qd[None, :], (horizon, 1))
+            xbar = jnp.tile(state.pipeline_state.x.pos[None, :, :], (horizon, 1, 1))
+        else:
+            rewss, pipeline_statess = self.rollout_us_vmap(state, us)
+            rew_Ybar_i = rewss[-1].mean()
+            qss = pipeline_statess.q
+            qdss = pipeline_statess.qd
+            xss = pipeline_statess.x.pos
         rews = rewss.mean(axis=-1)
         logp0 = (rews - rew_Ybar_i) / rews.std(axis=-1) / self.args.temp_sample
 
@@ -130,9 +151,10 @@ class MBDPI:
 
         # NOTE: update only with reward
         Ybar = jnp.einsum("n,nij->ij", weights, Y0s)
-        qbar = jnp.einsum("n,nij->ij", weights, qss)
-        qdbar = jnp.einsum("n,nij->ij", weights, qdss)
-        xbar = jnp.einsum("n,nijk->ijk", weights, xss)
+        if not self.args.memory_efficient_rollout:
+            qbar = jnp.einsum("n,nij->ij", weights, qss)
+            qdbar = jnp.einsum("n,nij->ij", weights, qdss)
+            xbar = jnp.einsum("n,nijk->ijk", weights, xss)
 
         info = {
             "rews": rews,
@@ -326,7 +348,12 @@ def main():
     def index():
         return webpage
 
-    app.run(port=5000)
+    # Bind all interfaces so WSL2 + browser on Windows host can reach the server.
+    print(
+        "Rollout visualization server starting. Open http://127.0.0.1:5000 "
+        "(or http://localhost:5000) in your browser. Ctrl+C to stop."
+    )
+    app.run(host="0.0.0.0", port=5000)
 
 
 if __name__ == "__main__":

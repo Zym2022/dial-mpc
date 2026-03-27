@@ -7,6 +7,8 @@ setup(
     packages=find_packages(include=["dial_mpc"]),
     version="0.0.2",
     install_requires=[
+        # jax_cosmo imports pkg_resources; setuptools 81+ no longer ships it
+        "setuptools<81",
         "numpy<2.0.0",
         "matplotlib",
         "tqdm",

@@ -6,6 +6,8 @@ examples = [
     "unitree_go2_seq_jump",
     "unitree_go2_crate_climb",
     "allegro_reorient",
+    "spirit_moz1_path_track",
+    "spirit_moz1_path_track_ultra_lowmem",
 ]
 
 deploy_examples = [
