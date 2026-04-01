@@ -1,0 +1,91 @@
+# DIAL-MPC Spirit MOZ1 mobile-base + joint tracking profile
+seed: 0
+output_dir: spirit_moz1_mobile_joint_track
+n_steps: 200
+
+env_name: spirit_moz1_path_track
+Nsample: 512
+Hsample: 6
+Hnode: 3
+Ndiffuse: 1
+Ndiffuse_init: 1
+temp_sample: 0.05
+horizon_diffuse_factor: 0.95
+traj_diffuse_factor: 0.25
+sigma_scale: 0.25
+update_method: mppi
+memory_efficient_rollout: true
+collision_mode: primitive
+chassis_model: planar_wrench_servo
+
+# Base environment
+dt: 0.02
+timestep: 0.002
+leg_control: torque
+action_scale: 1.0
+
+# Spirit MOZ1
+task_name: stand_hold
+randomize_tasks: false
+wheel_torque_scale: 1.0
+wheel_kp: [60.0, 60.0, 60.0, 60.0]
+wheel_kd: [10.0, 10.0, 10.0, 10.0]
+wheel_speed_limit: [20.0, 20.0, 20.0, 20.0]
+wheel_tau_limit: [120.0, 120.0, 120.0, 120.0]
+planar_wrench_kp: [11000.0, 8000.0, 1000.0]
+planar_wrench_kd: [350.0, 0.0, 0.0]
+planar_wrench_ki: [3600.0, 2500.0, 220.0]
+planar_control_period: 0.02
+planar_velocity_estimate_period: 0.02
+planar_integrator_deadband: [0.010, 0.015, 0.02]
+planar_integrator_leak: [0.05, 0.08, 0.10]
+planar_velocity_lpf_alpha: [0.10, 0.10, 0.12]
+planar_wrench_slew_rate: [65000.0, 50000.0, 15000.0]
+planar_force_limit: [7000.0, 5500.0]
+planar_torque_limit: 1700.0
+planar_cmd_ramp_time: 2.0
+tip_roll_limit: 0.75
+tip_pitch_limit: 0.75
+min_base_height: 0.03
+
+waist_leg_kp: [31500.0, 72000.0, 63000.0, 63000.0, 36000.0, 5000.0]
+waist_leg_kd: [2160.0, 760.0, 1100.0, 378.0, 540.0, 300.0]
+waist_leg_tau_limit: [450.0, 760.5, 709.8, 510.0, 499.5, 330.0]
+arm_kp: [7200.0, 8000.0, 5400.0, 5400.0, 450.0, 1800.0, 450.0]
+arm_kd: [130.0, 116.0, 81.0, 75.6, 28.0, 29.4, 28.0]
+arm_tau_limit: [120.0, 145.0, 90.0, 130.0, 35.0, 63.25, 35.0]
+
+path_amp_x: 0.0
+path_amp_y: 0.0
+path_omega: 0.0
+path_center_xy: [0.0, 0.0]
+z_ref: 0.08
+waist_leg_action_range_scale: 0.02
+arm_action_range_scale: 0.015
+command_ramp_time: 0.0
+mobile_root_ref_lpf_alpha: 0.18
+waist_leg_ref_delta: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+arm_ref_delta: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+reward_pos_weight: 20.0
+reward_yaw_weight: 4.0
+reward_vel_weight: 8.0
+reward_upright_weight: 4.0
+reward_height_weight: 5.0
+reward_ang_vel_weight: 2.0
+reward_arm_pose_weight: 1.5
+reward_arm_limit_weight: 1.0
+reward_waist_pose_weight: 1.5
+reward_waist_qd_weight: 0.05
+reward_waist_limit_weight: 1.0
+reward_ctrl_weight: 0.01
+reward_ctrl_rate_weight: 0.05
+
+stand_success_xy_tol: 0.002
+stand_success_z_tol: 0.002
+stand_success_yaw_tol: 0.01
+stand_success_waist_tol: 0.04
+stand_success_arm_tol: 0.05
+stand_success_joint_vel_tol: 0.20
+stand_success_body_ang_vel_tol: 0.10
+stand_success_steps: 80

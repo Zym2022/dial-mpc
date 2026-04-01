@@ -252,3 +252,10 @@ AMENT_IGNORE
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,c++,python,ros2
 
 dial_mpc_ws/
+
+# Dial-MPC: local experiment outputs and scratch (not packaged assets)
+logs/
+docs_to_agent/
+
+# Duplicate MOZ1 XML at repo root (canonical copy lives under dial_mpc/models/spirit_moz1/)
+/moz1.xml

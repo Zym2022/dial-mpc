@@ -3,7 +3,7 @@
     <default class="robot">
       <default class="motor">
         <!-- urdf2mjcf 会删掉根连杆 inertial；已在 base_link 手动补回。无 ctrl 时用弹簧保持零位 -->
-        <joint damping="0.4" armature="0.1" stiffness="8000" />
+        <joint damping="1.0" armature="0.1" stiffness="0" />
         <motor />
       </default>
       <default class="visual">
@@ -57,7 +57,7 @@
     <geom name="floor" type="plane" size="50 50 0.01" pos="0 0 0" rgba="0.92 0.92 0.92 1" contype="1" conaffinity="1" />
     <body name="base_link" pos="0.00000000 0.00000000 0.00000000" quat="1 0 0 0" childclass="robot">
       <freejoint name="floating_base" />
-      <inertial pos="0.00718 0.03634 0.03333" quat="1 0 0 0" mass="60.64" diaginertia="1.86830738 1.63486351 2.82299198" />
+      <inertial pos="0.00718 0.03634 0.03333" quat="1 0 0 0" mass="90.96" diaginertia="2.80246107 2.45229527 4.23448797" />
       <geom name="base_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="base_link.STL" class="collision" />
       <geom name="base_link_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="urdf_visual" type="mesh" mesh="base_link.STL" class="visual" />
       <body name="wheel01" pos="0.2423 0.2423 0" quat="0.38268343245394154 0.0 0.0 0.9238795324744832">
@@ -296,7 +296,7 @@
   <keyframe>
     <key
       name="stand"
-      qpos="0 0 0.463 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+      qpos="0 0 0.08 1 0 0 0 0 0 0 0 0 1.047197551 -1.570796327 0.523598776 0 0 -0.157079633 -0.872664626 -0.34906585 -1.570796327 -0.610865238 0.13962634 -0.122173048 0.157079633 -0.872664626 0.34906585 1.570796327 0.610865238 0.13962634 0.122173048 0 0"
     />
   </keyframe>
 

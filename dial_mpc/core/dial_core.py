@@ -312,8 +312,9 @@ def main():
     import flask
 
     app = flask.Flask(__name__)
+    render_sys = env.make_visualization_system() if hasattr(env, "make_visualization_system") else env.sys
     webpage = html.render(
-        env.sys.tree_replace({"opt.timestep": env.dt}), rollout, 1080, True
+        render_sys.tree_replace({"opt.timestep": env.dt}), rollout, 1080, True
     )
 
     # save the html file
